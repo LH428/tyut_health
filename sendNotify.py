@@ -42,7 +42,7 @@ def readConfig(configPath):
 # 通知服务
 rootDir = os.path.dirname(os.path.abspath(__file__))
 configPath = rootDir + "/config.json"
-print(configPath)
+# print(configPath)
 config = readConfig(configPath)
 if "BARK" in config['send'][0] and config['send'][0]["BARK"]:
     BARK = config['send'][0]["BARK"]
