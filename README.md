@@ -39,6 +39,14 @@
                "campus":"迎西"//明向or迎西or虎峪
                "iscampus":true,//是否在校，默认为true在校,不在校请填false,并填写submitdata
                "submitdata":"submitdata=1%242%7D216%241"//不在校需要填写的submitdata，由抓包获取
+           },
+           {
+               "nickname": "//通知的绰号",
+               "id": "学号2019******",
+               "pwd":"密码******",
+               "campus":"迎西"//明向or迎西or虎峪
+               "iscampus":true,//是否在校，默认为true在校,不在校请填false,并填写submitdata
+               "submitdata":"submitdata=1%242%7D216%241"//不在校需要填写的submitdata，由抓包获取
            }
        ],
        "send":[
