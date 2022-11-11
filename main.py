@@ -3,7 +3,7 @@
 '''
 项目名称: tyut_health 
 功能：Fill in the body temperature
-Date: 2022/06/09 
+Date: 2022/11/11 
 cron: 10 12,13 * * *
 '''
 import requests
@@ -11,9 +11,11 @@ from bs4 import BeautifulSoup
 import  time
 from urllib import parse
 import json
-import os, re, sys
-import random, string
+import os,sys
+import random
 from urllib.parse import unquote
+import datetime
+# import calendar
 ## 获取通知服务
 class msg(object):
     def __init__(self, m):
@@ -253,7 +255,7 @@ def geturl1(cookie):
 	titleend = []
 	url1 = []
 	for link in soup.find_all('dl'):
-		if str(link.span.string).find('健康')>0:
+		if str(link.span.string).find('疫情')>0:
 			title.append(link.span.string)
 			url1.append('https://tyutgs.wjx.cn'+link.a.get('href'))
 		else:
@@ -287,13 +289,41 @@ def geturl2(url1):
 	argument['jqsign'] = get_jqsign(argument['jqnonce'])
 	argument['rn'] = argument.pop('rndnum')
 	url2 = url2+'&hmt=1&mst=34284&vpsiu=1&source=directphone&submittype=1&ktimes=4&hlv=1&iwx=1'+'&'+parse.urlencode(argument)
-	return url2
+	#print(url2)
+	urlqiniu = 'https://tyutgs.wjx.cn/joinnew/GetQiniuToken.ashx?ms=4096&q=3&activity='+str(activityId)
+	return url2,urlqiniu
 
+def getqiniu(url):
+	text = requests.get(url,headers=headers).text
+	# data = ''+text+''
+	# headertemp = headers
+	# headertemp['Content-Type']='multipart/form-data; boundary=----WebKitFormBoundarynnZ6k0ln5GTF1FtP'
+	# text = requests.get(url,headers=headertemp).text
+	return text
+
+def getpicname():
+	a = 'Screenshot_'
+	b = str(datetime.datetime.today()).split(' ')
+	lb0 = b[0].split('-')
+	sb0 = ''.join(lb0)
+	#lb1 = b[1].split(':')
+	#h = [4,5,6,7]
+	#sh = random.choice(h)
+	h = random.randint(8,11)
+	#h += int(lb1[0])
+	if h < 10:
+		h = '0'+str(h)
+	else: h = str(h)
+	m = str(random.randint(10,60))
+	s = str(random.randint(10,60))
+	name = a + sb0 + '-' + h + m + s +'.png'
+	#print(name)
+	return name
 ##用户填写在校问卷
 def whoupin(id,pwd,nickname,campus):
-	submitdata = {	 '明向':'submitdata=1%241%7D2%24%7D3%24%7D4%24%E5%B1%B1%E8%A5%BF%E7%9C%81%E6%99%8B%E4%B8%AD%E5%B8%82%E6%A6%86%E6%AC%A1%E5%8C%BA%E4%B9%8C%E9%87%91%E5%B1%B1%E9%95%87%E9%AD%8F%E6%A6%86%E8%B7%AF271%E5%8F%B7%E5%A4%AA%E5%8E%9F%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6%E6%98%8E%E5%90%91%E6%A0%A1%E5%8C%BA%5B112.71621%2C37.7505%5D%7D5%24%7D6%24%7D7%241!%7C%7D8%241%7D9%241%7D10%243%7D11%24(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%7D12%243%7D13%24-3%7D14%242%7D15%24(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%7D16%241',
-			 '迎西':'submitdata=1%241%7D2%24%7D3%24%7D4%24%E5%B1%B1%E8%A5%BF%E7%9C%81%E5%A4%AA%E5%8E%9F%E5%B8%82%E4%B8%87%E6%9F%8F%E6%9E%97%E5%8C%BA%E5%8D%83%E5%B3%B0%E8%A1%97%E9%81%93%E5%AE%97%E5%A4%8D%E8%B7%AF%E5%A4%AA%E5%8E%9F%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6%E8%BF%8E%E8%A5%BF%E6%A0%A1%E5%8C%BA%5B112.52244%2C37.860976%5D%7D5%24%7D6%24%7D7%241!%7C%7D8%241%7D9%241%7D10%243%7D11%24(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%7D12%243%7D13%24-3%7D14%242%7D15%24(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%7D16%241',
-			 '虎峪':'submitdata=1%241%7D2%24%7D3%24%7D4%24%E5%B1%B1%E8%A5%BF%E7%9C%81%E5%A4%AA%E5%8E%9F%E5%B8%82%E4%B8%87%E6%9F%8F%E6%9E%97%E5%8C%BA%E4%B8%8B%E5%85%83%E8%A1%97%E9%81%93%E6%89%BF%E8%96%AA%E4%B8%AD%E8%B7%AF%E5%A4%AA%E5%8E%9F%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6%E8%99%8E%E5%B3%AA%E6%A0%A1%E5%8C%BA%5B112.526249%2C37.854154%5D%7D5%24%7D6%242%7D7%241!%7C%7D8%241%7D9%241%7D10%243%7D11%24(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%7D12%243%7D13%24-3%7D14%242%7D15%24(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%5E(%E8%B7%B3%E8%BF%87)%7D16%241'}
+	submitdata = {'明向':'submitdata=1%241%7D2%24%E5%B1%B1%E8%A5%BF%E7%9C%81%E6%99%8B%E4%B8%AD%E5%B8%82%E6%A6%86%E6%AC%A1%E5%8C%BA%E4%B9%8C%E9%87%91%E5%B1%B1%E9%95%87%E6%98%8E%E5%90%91%E5%A4%A7%E9%81%93%E5%A4%AA%E5%8E%9F%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6%E6%98%8E%E5%90%91%E6%A0%A1%E5%8C%BA%5B112.72173%2C37.746074%5D%7D3%24',
+	'迎西':'submitdata=1%241%7D2%24%E5%B1%B1%E8%A5%BF%E7%9C%81%E5%A4%AA%E5%8E%9F%E5%B8%82%E4%B8%87%E6%9F%8F%E6%9E%97%E5%8C%BA%E5%8D%83%E5%B3%B0%E8%A1%97%E9%81%93%E5%AE%97%E5%A4%8D%E8%B7%AF%E5%A4%AA%E5%8E%9F%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6%E8%BF%8E%E8%A5%BF%E6%A0%A1%E5%8C%BA%5B112.52244%2C37.860976%5D%7D3%24',
+	'虎峪':'submitdata=1%241%7D2%24%E5%B1%B1%E8%A5%BF%E7%9C%81%E5%A4%AA%E5%8E%9F%E5%B8%82%E4%B8%87%E6%9F%8F%E6%9E%97%E5%8C%BA%E4%B8%8B%E5%85%83%E8%A1%97%E9%81%93%E6%89%BF%E8%96%AA%E4%B8%AD%E8%B7%AF%E5%A4%AA%E5%8E%9F%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6%E8%99%8E%E5%B3%AA%E6%A0%A1%E5%8C%BA%5B112.526249%2C37.854154%5D%7D3%24'}
 	cookie = getcookie(id,pwd)
 	titletemp,url1temp = geturl1(cookie)
 	retext = ''
@@ -301,14 +331,29 @@ def whoupin(id,pwd,nickname,campus):
 	for i in range(len(url1temp)):
 		#print(titletemp[i])
 		if geturl2(url1temp[i]):
-			url2temp = geturl2(url1temp[i])
-			#print(url2temp)
+			url2temp,urlqiniutemp = geturl2(url1temp[i])
+			# print(url2temp)
 		else:
 			continue
+		keyqiniutemp = getqiniu(urlqiniutemp)
+		#print(keyqiniutemp)
+		qiniu = keyqiniutemp.split('〒')[1]
+		d = ''
+		for j in range(6):
+			b="ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678"
+			c=len(b)
+			charat = int(c*random.random())
+			d+=b[charat]
+		picname = getpicname()
+		key = qiniu+str(int(time.time()))+d+'.jpg%252C8355%252C' + picname + '%7D4%241%7C5%7D5%241%7D6%243%7D7%241'
+		submitdata[campus]+=key
 		text = requests.post(url2temp,data=submitdata[campus],headers=headers).text
-		if text.find('〒')>0:
+		#print(text)
+		if text.find('complete')>0:
 			success += 1
 			retext += '\n✅'+titletemp[i]
+		elif text.find('验证')>0:
+			retext += '\n❎需要验证❎'+titletemp[i]+'\n'+text
 		else:
 			retext += '\n❎'+titletemp[i]+'\n'+text
 	retext = nickname +'共'+str(len(titletemp))+'个问卷，已填'+str(success)+'个'+retext
@@ -323,14 +368,16 @@ def whoupout(id,pwd,nickname,submitdata):
 	for i in range(len(url1temp)):
 		#print(titletemp[i])
 		if geturl2(url1temp[i]):
-			url2temp = geturl2(url1temp[i])
+			url2temp,urlqiniutemp = geturl2(url1temp[i])
 			#print(url2temp)
 		else:
 			continue
 		text = requests.post(url2temp,data=submitdata,headers=headers).text
-		if text.find('〒')>0:
+		if text.find('complete')>0:
 			success += 1
 			retext += '\n✅'+titletemp[i]
+		elif text.find('验证')>0:
+			retext += '\n❎需要验证❎'+titletemp[i]+'\n'+text
 		else:
 			retext += '\n❎'+titletemp[i]+'\n'+text
 	retext = nickname +'共'+str(len(titletemp))+'个问卷，已填'+str(success)+'个'+retext
