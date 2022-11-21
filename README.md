@@ -114,7 +114,7 @@
 
 4. 在脚本管理--->新建文件（文件名config.json）、父目录（LH428_tyut_health_main）
 
-  ![image-20221121172854143]https://github.com/LH428/tyut_health/blob/main/figure/2.png)
+  ![image-20221121172854143](https://github.com/LH428/tyut_health/blob/main/figure/2.png)
 
 5. 把config.sample.json文件内容复制到config.json中，并按本地方法进行配置
 
